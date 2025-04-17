@@ -23,14 +23,6 @@ public:
     };
 };
 
-class MuteQuack : public QuackBehavior {
-public:
-    void quack() const override
-    {
-        std::cout << "...\n";
-    };
-};
-
 class Duck {
 public:
     virtual ~Duck() = default;
@@ -78,36 +70,20 @@ public:
     }
 };
 
-class DecoyDuck : public Duck {
-public:
-    DecoyDuck()
-    {
-        setQuack(std::make_unique<MuteQuack>());
-    }
-
-    void display() const override
-    {
-        std::cout << "looks like a decoy\n";
-    }
-};
-
 int main()
 {
     // program to the interface, not the implementation
     std::unique_ptr<Duck> mallard = std::make_unique<MallardDuck>();
     std::unique_ptr<Duck> rubberDuckie = std::make_unique<RubberDuck>();
-    std::unique_ptr<Duck> decoy = std::make_unique<DecoyDuck>();
 
     // each has unique behavior
     mallard->display();
     mallard->performQuack();
     rubberDuckie->display();
     rubberDuckie->performQuack();
-    decoy->display();
-    decoy->performQuack();
 
     // can change behavior at runtime
-    decoy->setQuack(std::make_unique<Quack>());
-    decoy->display();
-    decoy->performQuack();
+    rubberDuckie->setQuack(std::make_unique<Quack>());
+    rubberDuckie->display();
+    rubberDuckie->performQuack();
 }
