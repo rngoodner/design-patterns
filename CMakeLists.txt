@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 
 # Add strategy program
-add_executable(strategy strategy/main.cpp)
+add_executable(strategy strategy/main.cpp strategy/strategy.cpp)
 
 # Add visitor program
 add_executable(visitor visitor/main.cpp)
