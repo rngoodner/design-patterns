@@ -10,5 +10,5 @@ add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 # Add strategy program
 add_executable(strategy strategy/main.cpp strategy/strategy.cpp)
 
-# Add visitor program
-add_executable(visitor visitor/main.cpp)
+# Add observer program
+add_executable(observer observer/main.cpp observer/observer.cpp)

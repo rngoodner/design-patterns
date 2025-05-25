@@ -51,3 +51,61 @@ Duck --> QuackBehavior
 QuackBehavior <|.. Quack
 QuackBehavior <|.. Squeak
 ```
+
+## Observer Pattern
+
+The Observer Pattern defines a one-to-many dependency between objects so that when one object changes state, all of its dependents are notified and updated automatically.
+
+```mermaid
+classDiagram
+
+class Observer {
+    public virtual ~Observer() = default;
+    public virtual void update() = 0;
+}
+
+class Subject {
+    public virtual ~Subject() = default;
+    public virtual void registerObserver(Observer*) = 0;
+    public virtual void removeObserver(Observer*) = 0;
+    public virtual void notifyObservers() = 0;
+}
+
+class WeatherData {
+    public void registerObserver(Observer* observer) override;
+    public void removeObserver(Observer* observer) override;
+    public void notifyObservers() override;
+    public void setTemp(double tempF);
+    public double getTemp() const;
+    public void setHumidity(double humidity);
+    public double getHumidity() const;
+
+    private std::vector__Observer*__ m_observers;
+    private double m_tempF;
+    private double m_humidity;
+}
+
+class BasicWeatherDataDisplay {
+    public BasicWeatherDataDisplay(std::shared_ptr__WeatherData__ weatherData);
+    public ~BasicWeatherDataDisplay() override;
+    public void update() override;
+
+    private std::shared_ptr__WeatherData__ m_weatherData;
+}
+
+class HeatIndexDisplay {
+    public HeatIndexDisplay(std::shared_ptr__WeatherData__ weatherData);
+    public ~HeatIndexDisplay() override;
+    public void update() override;
+
+    private std::shared_ptr__WeatherData__ m_weatherData;
+    private double getHeatIndex(double temp, double humidity);
+}
+
+Subject <|.. WeatherData
+Observer <|.. BasicWeatherDataDisplay
+Observer <|.. HeatIndexDisplay
+WeatherData --> Observer
+BasicWeatherDataDisplay --> WeatherData
+HeatIndexDisplay --> WeatherData
+```
