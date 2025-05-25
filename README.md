@@ -129,9 +129,6 @@ class Tea {
     public std::string getDescription() const override;
 }
 
-class BeverageDecorator {
-}
-
 class Milk {
     public Milk(std::shared_ptr__Beverage__ beverage);
     public std::string getDescription() const override;
