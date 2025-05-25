@@ -41,20 +41,20 @@ double WeatherData::getHumidity() const
     return m_humidity;
 }
 
-BasicWeatherDataDisplay::BasicWeatherDataDisplay(std::shared_ptr<WeatherData> weatherData)
+BasicDisplay::BasicDisplay(std::shared_ptr<WeatherData> weatherData)
     : m_weatherData(weatherData)
 {
     m_weatherData->registerObserver(this);
 }
 
-BasicWeatherDataDisplay::~BasicWeatherDataDisplay()
+BasicDisplay::~BasicDisplay()
 {
     m_weatherData->removeObserver(this);
 }
 
-void BasicWeatherDataDisplay::update()
+void BasicDisplay::update()
 {
-    std::cout << "\nBasic Weather Data Display Observed an update:\n";
+    std::cout << "\nBasic Display Observed an update:\n";
     std::cout << "Temperature: " << m_weatherData->getTemp() << "F\n";
     std::cout << "Humidity: " << m_weatherData->getHumidity() << "%\n";
 }
@@ -79,7 +79,6 @@ void HeatIndexDisplay::update()
 double HeatIndexDisplay::getHeatIndex(double temp, double humidity)
 {
     // Official NWS Rothfusz regression equation for heat index
-    // temp = temperature in degrees Fahrenheit, humidity = relative humidity in percent
     return -42.379 + 2.04901523 * temp + 10.14333127 * humidity - 0.22475541 * temp * humidity
         - 0.00683783 * temp * temp - 0.05481717 * humidity * humidity + 0.00122874 * temp * temp * humidity
         + 0.00085282 * temp * humidity * humidity - 0.00000199 * temp * temp * humidity * humidity;

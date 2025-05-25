@@ -4,20 +4,20 @@
 
 int main()
 {
-    // create a WeatherData object
+    // create subject and observers
     auto weatherData = std::make_shared<WeatherData>();
+    BasicDisplay basicDisplay(weatherData);
+    HeatIndexDisplay heatIndexDisplay(weatherData);
 
-    // create a BasicWeatherDataDisplay object
-    std::shared_ptr<Observer> basicDisplay = std::make_shared<BasicWeatherDataDisplay>(weatherData);
-
-    // create a HeatIndexDisplay object
-    std::shared_ptr<Observer> heatIndexDisplay = std::make_shared<HeatIndexDisplay>(weatherData);
-
-    // update the weather data
+    // update the subject and notify obervers
     weatherData->setTemp(85);
     weatherData->setHumidity(95);
+    weatherData->notifyObservers();
 
-    // notify observers
+    // remove an observer, update subject, and notify observers again
+    heatIndexDisplay.~HeatIndexDisplay();
+    weatherData->setTemp(90);
+    weatherData->setHumidity(98);
     weatherData->notifyObservers();
 
     return 0;

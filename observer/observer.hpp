@@ -38,10 +38,10 @@ private:
 };
 
 // BasicWeatherDataDisplay concrete Observer
-class BasicWeatherDataDisplay : public Observer {
+class BasicDisplay : public Observer {
 public:
-    BasicWeatherDataDisplay(std::shared_ptr<WeatherData> weatherData);
-    ~BasicWeatherDataDisplay() override;
+    BasicDisplay(std::shared_ptr<WeatherData> weatherData);
+    ~BasicDisplay() override;
     void update() override;
 
 private:
