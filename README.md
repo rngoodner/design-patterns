@@ -109,3 +109,62 @@ WeatherData --> Observer
 BasicWeatherDataDisplay --> WeatherData
 HeatIndexDisplay --> WeatherData
 ```
+## Decorator Pattern
+
+The Decorator Pattern attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
+
+```mermaid
+classDiagram
+
+class Beverage {
+    public virtual ~Beverage() = default;
+    public virtual std::string getDescription() const = 0;
+}
+
+class Coffee {
+    public std::string getDescription() const override;
+}
+
+class Tea {
+    public std::string getDescription() const override;
+}
+
+class BeverageDecorator {
+}
+
+class Milk {
+    public Milk(std::shared_ptr__Beverage__ beverage);
+    public std::string getDescription() const override;
+    private std::shared_ptr__Beverage__ m_beverage;
+}
+
+class Soy {
+    public Soy(std::shared_ptr__Beverage__ beverage);
+    public std::string getDescription() const override;
+    private std::shared_ptr__Beverage__ m_beverage;
+}
+
+class Whip {
+    public Whip(std::shared_ptr__Beverage__ beverage);
+    public std::string getDescription() const override;
+    private std::shared_ptr__Beverage__ m_beverage;
+}
+
+class Sugar {
+    public Sugar(std::shared_ptr__Beverage__ beverage);
+    public std::string getDescription() const override;
+    private std::shared_ptr__Beverage__ m_beverage;
+}
+
+Beverage <|.. Coffee
+Beverage <|.. Tea
+Beverage <|.. BeverageDecorator
+BeverageDecorator <|.. Milk
+BeverageDecorator <|.. Soy
+BeverageDecorator <|.. Whip
+BeverageDecorator <|.. Sugar
+Milk --> Beverage
+Soy --> Beverage
+Whip --> Beverage
+Sugar --> Beverage
+```
