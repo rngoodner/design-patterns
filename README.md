@@ -30,9 +30,9 @@ class Duck {
     public virtual void display() const = 0
 
     public void performQuack()
-    public void setQuack(std::unique_ptr__QuackBehavior qb)
+    public void setQuack(std::unique_ptr__QuackBehavior__ qb)
 
-    private std::unique_ptr__QuackBehavior m_quackBehavior
+    private std::unique_ptr__QuackBehavior__ m_quackBehavior
 }
 
 class MallardDuck {
