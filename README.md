@@ -214,8 +214,8 @@ Pizza <|.. ChicagoCheesePizza
 Pizza <|.. ChicagoPepperoniPizza
 PizzaStore <|.. NyPizzaStore
 PizzaStore <|.. ChicagoPizzaStore
-NyPizzaStore ..> NyCheesePizza
-NyPizzaStore ..> NyPepperoniPizza
-ChicagoPizzaStore ..> ChicagoCheesePizza
-ChicagoPizzaStore ..> ChicagoPepperoniPizza
+NyPizzaStore --> NyCheesePizza
+NyPizzaStore --> NyPepperoniPizza
+ChicagoPizzaStore --> ChicagoCheesePizza
+ChicagoPizzaStore --> ChicagoPepperoniPizza
 ```
