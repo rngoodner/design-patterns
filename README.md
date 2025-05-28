@@ -165,3 +165,57 @@ Soy --> Beverage
 Whip --> Beverage
 Sugar --> Beverage
 ```
+
+## Factory Method Pattern
+
+The Factory Method Pattern defines an interface for creating an object, but lets subclasses decide whichbclass to instantiate. Factory Method lets a class defer instantiation to subclasses.
+
+```mermaid
+classDiagram
+
+class Pizza {
+    public virtual ~Pizza() = default;
+    public virtual std::string getDescription() const = 0;
+}
+
+class NyCheesePizza {
+    public std::string getDescription() const override;
+}
+
+class NyPepperoniPizza {
+    public std::string getDescription() const override;
+}
+
+class ChicagoCheesePizza {
+    public std::string getDescription() const override;
+}
+
+class ChicagoPepperoniPizza {
+    public std::string getDescription() const override;
+}
+
+class PizzaStore {
+    public virtual ~PizzaStore() = default;
+    public std::unique_ptr__Pizza__ orderPizza(PizzaType type);
+    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0;
+}
+
+class NyPizzaStore {
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+}
+
+class ChicagoPizzaStore {
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+}
+
+Pizza <|.. NyCheesePizza
+Pizza <|.. NyPepperoniPizza
+Pizza <|.. ChicagoCheesePizza
+Pizza <|.. ChicagoPepperoniPizza
+PizzaStore <|.. NyPizzaStore
+PizzaStore <|.. ChicagoPizzaStore
+NyPizzaStore ..> NyCheesePizza
+NyPizzaStore ..> NyPepperoniPizza
+ChicagoPizzaStore ..> ChicagoCheesePizza
+ChicagoPizzaStore ..> ChicagoPepperoniPizza
+```
