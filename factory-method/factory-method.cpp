@@ -1,7 +1,5 @@
 #include "factory-method.hpp"
 
-#include <iostream>
-
 std::string NyCheesePizza::getDescription() const
 {
     return "New York Style Cheese Pizza";

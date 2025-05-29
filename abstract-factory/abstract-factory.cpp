@@ -1,7 +1,6 @@
 #include "abstract-factory.hpp"
 
 #include <cstddef>
-#include <iostream>
 #include <string>
 
 using namespace af;
@@ -57,10 +56,10 @@ std::unique_ptr<Pizza> NyPizzaStore::createPizza(PizzaType type)
     std::unique_ptr<Pizza> pizza;
     switch (type) {
     case PizzaType::cheese:
-        pizza = std::make_unique<CheesePizza>(*m_factory);
+        pizza = std::make_unique<CheesePizza>(m_factory);
         break;
     case PizzaType::pepperoni:
-        pizza = std::make_unique<PepperoniPizza>(*m_factory);
+        pizza = std::make_unique<PepperoniPizza>(m_factory);
         break;
     }
     return pizza;
@@ -71,10 +70,10 @@ std::unique_ptr<Pizza> ChicagoPizzaStore::createPizza(PizzaType type)
     std::unique_ptr<Pizza> pizza;
     switch (type) {
     case PizzaType::cheese:
-        pizza = std::make_unique<CheesePizza>(*m_factory);
+        pizza = std::make_unique<CheesePizza>(m_factory);
         break;
     case PizzaType::pepperoni:
-        pizza = std::make_unique<PepperoniPizza>(*m_factory);
+        pizza = std::make_unique<PepperoniPizza>(m_factory);
         break;
     }
     return pizza;

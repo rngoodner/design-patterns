@@ -85,9 +85,9 @@ class WeatherData {
     private double m_humidity;
 }
 
-class BasicWeatherDataDisplay {
-    public BasicWeatherDataDisplay(std::shared_ptr__WeatherData__ weatherData);
-    public ~BasicWeatherDataDisplay() override;
+class BasicDisplay {
+    public BasicDisplay(std::shared_ptr__WeatherData__ weatherData);
+    public ~BasicDisplay() override;
     public void update() override;
 
     private std::shared_ptr__WeatherData__ m_weatherData;
@@ -103,10 +103,10 @@ class HeatIndexDisplay {
 }
 
 Subject <|.. WeatherData
-Observer <|.. BasicWeatherDataDisplay
+Observer <|.. BasicDisplay
 Observer <|.. HeatIndexDisplay
 WeatherData --> Observer
-BasicWeatherDataDisplay --> WeatherData
+BasicDisplay --> WeatherData
 HeatIndexDisplay --> WeatherData
 ```
 ## Decorator Pattern
@@ -268,12 +268,12 @@ class PizzaStore {
 
 class NyPizzaStore {
     private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
-    private std::unique_ptr__PizzaIngredientFactory__ m_factory;
+    private NyIngredientFactory m_factory;
 }
 
 class ChicagoPizzaStore {
     private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
-    private std::unique_ptr__PizzaIngredientFactory__ m_factory;
+    private ChicagoIngredientFactory m_factory;
 }
 
 PizzaIngredientFactory <|.. NyIngredientFactory

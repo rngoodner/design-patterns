@@ -78,14 +78,14 @@ private:
 class NyPizzaStore : public PizzaStore {
 private:
     std::unique_ptr<Pizza> createPizza(PizzaType type) override;
-    std::unique_ptr<PizzaIngredientFactory> m_factory = std::make_unique<NyIngredientFactory>();
+    NyIngredientFactory m_factory;
 };
 
 // concrete chicago pizza store
 class ChicagoPizzaStore : public PizzaStore {
 private:
     std::unique_ptr<Pizza> createPizza(PizzaType type) override;
-    std::unique_ptr<PizzaIngredientFactory> m_factory = std::make_unique<ChicagoIngredientFactory>();
+    ChicagoIngredientFactory m_factory;
 };
 
 } // namespace af
