@@ -25,7 +25,6 @@ std::string ChicagoPepperoniPizza::getDescription() const
 std::unique_ptr<Pizza> PizzaStore::orderPizza(PizzaType type)
 {
     auto pizza = createPizza(type);
-    std::cout << "Preparing your " << pizza->getDescription() << std::endl;
     return pizza;
 }
 

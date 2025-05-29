@@ -219,3 +219,75 @@ NyPizzaStore --> NyPepperoniPizza
 ChicagoPizzaStore --> ChicagoCheesePizza
 ChicagoPizzaStore --> ChicagoPepperoniPizza
 ```
+
+## Abstract Factory Pattern
+
+The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+
+```mermaid
+classDiagram
+
+class PizzaIngredientFactory {
+    public virtual ~PizzaIngredientFactory() = default;
+    public virtual std::string createDough() const = 0;
+    public virtual std::string createSauce() const = 0;
+}
+
+class NyIngredientFactory {
+    public std::string createDough() const override;
+    public std::string createSauce() const override;
+}
+
+class ChicagoIngredientFactory {
+    public std::string createDough() const override;
+    public std::string createSauce() const override;
+}
+
+class Pizza {
+    public virtual ~Pizza() = default;
+    public virtual std::string getDescription() const = 0;
+}
+
+class CheesePizza {
+    public CheesePizza(PizzaIngredientFactory& factory);
+    public std::string getDescription() const override;
+    private PizzaIngredientFactory& m_factory;
+}
+
+class PepperoniPizza {
+    public PepperoniPizza(PizzaIngredientFactory& factory);
+    public std::string getDescription() const override;
+    private PizzaIngredientFactory& m_factory;
+}
+
+class PizzaStore {
+    public virtual ~PizzaStore() = default;
+    public std::unique_ptr__Pizza__ orderPizza(PizzaType type);
+    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0;
+}
+
+class NyPizzaStore {
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+    private std::unique_ptr__PizzaIngredientFactory__ m_factory;
+}
+
+class ChicagoPizzaStore {
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+    private std::unique_ptr__PizzaIngredientFactory__ m_factory;
+}
+
+PizzaIngredientFactory <|.. NyIngredientFactory
+PizzaIngredientFactory <|.. ChicagoIngredientFactory
+Pizza <|.. CheesePizza
+Pizza <|.. PepperoniPizza
+PizzaStore <|.. NyPizzaStore
+PizzaStore <|.. ChicagoPizzaStore
+CheesePizza --> PizzaIngredientFactory
+PepperoniPizza --> PizzaIngredientFactory
+NyPizzaStore --> NyIngredientFactory
+ChicagoPizzaStore --> ChicagoIngredientFactory
+NyPizzaStore --> CheesePizza
+NyPizzaStore --> PepperoniPizza
+ChicagoPizzaStore --> CheesePizza
+ChicagoPizzaStore --> PepperoniPizza
+```

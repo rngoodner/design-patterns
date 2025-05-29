@@ -1,6 +1,8 @@
-#include "factory-method.hpp"
+#include "abstract-factory.hpp"
 
 #include <iostream>
+
+using namespace af;
 
 int main()
 {
