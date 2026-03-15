@@ -1,6 +1,9 @@
 #include "observer.hpp"
 
+#include <algorithm>
 #include <iostream>
+
+// WeatherData
 
 void WeatherData::registerObserver(Observer* observer)
 {
@@ -14,72 +17,104 @@ void WeatherData::removeObserver(Observer* observer)
 
 void WeatherData::notifyObservers()
 {
-    for (const auto& observer : m_observers) {
+    for (const auto& observer : m_observers)
         observer->update();
-    }
 }
 
-void WeatherData::setTemp(double tempF)
+void WeatherData::setMeasurements(double tempF, double humidity, double pressure)
 {
     m_tempF = tempF;
-    // could also notify here
-}
-
-double WeatherData::getTemp() const
-{
-    return m_tempF;
-    // could also notify here
-}
-
-void WeatherData::setHumidity(double humidity)
-{
     m_humidity = humidity;
+    m_pressure = pressure;
+    notifyObservers();
 }
 
-double WeatherData::getHumidity() const
-{
-    return m_humidity;
-}
+double WeatherData::getTemp() const { return m_tempF; }
+double WeatherData::getHumidity() const { return m_humidity; }
+double WeatherData::getPressure() const { return m_pressure; }
 
-BasicDisplay::BasicDisplay(std::shared_ptr<WeatherData> weatherData)
+// CurrentConditionsDisplay
+
+CurrentConditionsDisplay::CurrentConditionsDisplay(std::shared_ptr<WeatherData> weatherData)
     : m_weatherData(weatherData)
 {
     m_weatherData->registerObserver(this);
 }
 
-BasicDisplay::~BasicDisplay()
+CurrentConditionsDisplay::~CurrentConditionsDisplay()
 {
     m_weatherData->removeObserver(this);
 }
 
-void BasicDisplay::update()
+void CurrentConditionsDisplay::update()
 {
-    std::cout << "\nBasic Display Observed an update:\n";
-    std::cout << "Temperature: " << m_weatherData->getTemp() << "F\n";
-    std::cout << "Humidity: " << m_weatherData->getHumidity() << "%\n";
+    m_temp = m_weatherData->getTemp();
+    m_humidity = m_weatherData->getHumidity();
+    display();
 }
 
-HeatIndexDisplay::HeatIndexDisplay(std::shared_ptr<WeatherData> weatherData)
+void CurrentConditionsDisplay::display() const
+{
+    std::cout << "Current conditions: " << m_temp << "F degrees and " << m_humidity << "% humidity\n";
+}
+
+// StatisticsDisplay
+
+StatisticsDisplay::StatisticsDisplay(std::shared_ptr<WeatherData> weatherData)
     : m_weatherData(weatherData)
 {
     m_weatherData->registerObserver(this);
 }
 
-HeatIndexDisplay::~HeatIndexDisplay()
+StatisticsDisplay::~StatisticsDisplay()
 {
     m_weatherData->removeObserver(this);
 }
 
-void HeatIndexDisplay::update()
+void StatisticsDisplay::update()
 {
-    std::cout << "\nHeat Index Display Observed an update:\n";
-    std::cout << "Heat Index: " << getHeatIndex(m_weatherData->getTemp(), m_weatherData->getHumidity()) << "F\n";
+    double temp = m_weatherData->getTemp();
+    if (temp < m_minTemp)
+        m_minTemp = temp;
+    if (temp > m_maxTemp)
+        m_maxTemp = temp;
+    m_sumTemp += temp;
+    ++m_numReadings;
+    display();
 }
 
-double HeatIndexDisplay::getHeatIndex(double temp, double humidity)
+void StatisticsDisplay::display() const
 {
-    // Official NWS Rothfusz regression equation for heat index
-    return -42.379 + 2.04901523 * temp + 10.14333127 * humidity - 0.22475541 * temp * humidity
-        - 0.00683783 * temp * temp - 0.05481717 * humidity * humidity + 0.00122874 * temp * temp * humidity
-        + 0.00085282 * temp * humidity * humidity - 0.00000199 * temp * temp * humidity * humidity;
+    std::cout << "Avg/Max/Min temperature: " << (m_sumTemp / m_numReadings)
+              << "/" << m_maxTemp << "/" << m_minTemp << "\n";
+}
+
+// ForecastDisplay
+
+ForecastDisplay::ForecastDisplay(std::shared_ptr<WeatherData> weatherData)
+    : m_weatherData(weatherData)
+{
+    m_weatherData->registerObserver(this);
+}
+
+ForecastDisplay::~ForecastDisplay()
+{
+    m_weatherData->removeObserver(this);
+}
+
+void ForecastDisplay::update()
+{
+    m_lastPressure = m_currentPressure;
+    m_currentPressure = m_weatherData->getPressure();
+    display();
+}
+
+void ForecastDisplay::display() const
+{
+    if (m_currentPressure > m_lastPressure)
+        std::cout << "Forecast: improving weather on the way!\n";
+    else if (m_currentPressure == m_lastPressure)
+        std::cout << "Forecast: more of the same\n";
+    else
+        std::cout << "Forecast: watch out for cooler, rainy weather\n";
 }

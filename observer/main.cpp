@@ -4,27 +4,15 @@
 
 int main()
 {
-    // create subject and observer
     auto weatherData = std::make_shared<WeatherData>();
-    BasicDisplay basicDisplay(weatherData);
 
-    // observer notified when weather changes
-    weatherData->setTemp(85);
-    weatherData->setHumidity(95);
-    weatherData->notifyObservers();
+    // observers self-register in constructor and self-remove in destructor (RAII)
+    CurrentConditionsDisplay currentDisplay(weatherData);
+    StatisticsDisplay statisticsDisplay(weatherData);
+    ForecastDisplay forecastDisplay(weatherData);
 
-    // add a new observer within a scope
-    {
-        HeatIndexDisplay tempHeatDisplay(weatherData);
-        weatherData->setTemp(90);
-        weatherData->setHumidity(98);
-        weatherData->notifyObservers();
-    } // tempHeatDisplay destructor automatically removes it from weatherData
-
-    // now only basicDisplay should receive notifications
-    weatherData->setTemp(75);
-    weatherData->setHumidity(60);
-    weatherData->notifyObservers();
-
-    return 0;
+    // setMeasurements notifies all registered observers
+    weatherData->setMeasurements(80, 65, 30.4);
+    weatherData->setMeasurements(82, 70, 29.2);
+    weatherData->setMeasurements(78, 90, 29.2);
 }

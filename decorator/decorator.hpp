@@ -9,58 +9,71 @@ class Beverage {
 public:
     virtual ~Beverage() = default;
     virtual std::string getDescription() const = 0;
+    virtual double cost() const = 0;
 };
 
-// Coffee concrete beverage
-class Coffee : public Beverage {
+// Concrete beverages
+class Espresso : public Beverage {
 public:
     std::string getDescription() const override;
+    double cost() const override;
 };
 
-// Tea concrete beverage
-class Tea : public Beverage {
+class HouseBlend : public Beverage {
 public:
     std::string getDescription() const override;
+    double cost() const override;
 };
 
-// Beverage decorator interface
-class BeverageDecorator : public Beverage { };
-
-// Milk concrete decorator
-class Milk : public BeverageDecorator {
+class DarkRoast : public Beverage {
 public:
-    Milk(std::shared_ptr<Beverage> beverage);
     std::string getDescription() const override;
+    double cost() const override;
+};
+
+// Condiment decorator base — wraps a Beverage and forces subclasses to implement both methods
+class CondimentDecorator : public Beverage {
+public:
+    virtual std::string getDescription() const = 0;
+    virtual double cost() const = 0;
+};
+
+// Concrete decorators
+class Milk : public CondimentDecorator {
+public:
+    explicit Milk(std::shared_ptr<Beverage> beverage);
+    std::string getDescription() const override;
+    double cost() const override;
 
 private:
     std::shared_ptr<Beverage> m_beverage;
 };
 
-// Soy concrete decorator
-class Soy : public BeverageDecorator {
+class Mocha : public CondimentDecorator {
 public:
-    Soy(std::shared_ptr<Beverage> beverage);
+    explicit Mocha(std::shared_ptr<Beverage> beverage);
     std::string getDescription() const override;
+    double cost() const override;
 
 private:
     std::shared_ptr<Beverage> m_beverage;
 };
 
-// Whip concrete decorator
-class Whip : public BeverageDecorator {
+class Soy : public CondimentDecorator {
 public:
-    Whip(std::shared_ptr<Beverage> beverage);
+    explicit Soy(std::shared_ptr<Beverage> beverage);
     std::string getDescription() const override;
+    double cost() const override;
 
 private:
     std::shared_ptr<Beverage> m_beverage;
 };
 
-// Sugar concrete decorator
-class Sugar : public BeverageDecorator {
+class Whip : public CondimentDecorator {
 public:
-    Sugar(std::shared_ptr<Beverage> beverage);
+    explicit Whip(std::shared_ptr<Beverage> beverage);
     std::string getDescription() const override;
+    double cost() const override;
 
 private:
     std::shared_ptr<Beverage> m_beverage;

@@ -8,63 +8,81 @@ namespace af {
 
 enum class PizzaType {
     cheese,
+    clam,
     pepperoni
 };
 
-// pizza ingredient factory interface
+// Abstract factory: creates a family of related ingredients
 class PizzaIngredientFactory {
 public:
     virtual ~PizzaIngredientFactory() = default;
     virtual std::string createDough() const = 0;
     virtual std::string createSauce() const = 0;
+    virtual std::string createCheese() const = 0;
+    virtual std::string createClam() const = 0;
 };
 
 class NyIngredientFactory : public PizzaIngredientFactory {
 public:
     std::string createDough() const override;
     std::string createSauce() const override;
+    std::string createCheese() const override;
+    std::string createClam() const override;
 };
 
 class ChicagoIngredientFactory : public PizzaIngredientFactory {
 public:
     std::string createDough() const override;
     std::string createSauce() const override;
+    std::string createCheese() const override;
+    std::string createClam() const override;
 };
 
-// pizza class interface
+// Pizza abstract class — prepare() uses the ingredient factory; lifecycle same as factory-method
 class Pizza {
 public:
     virtual ~Pizza() = default;
-    virtual std::string getDescription() const = 0;
+    virtual std::string getName() const = 0;
+    virtual void prepare() = 0;
+    void bake();
+    void cut();
+    void box();
 };
 
-// notice compared to the factory method pattern we now have only one concrete class for each
-// pizza type, but they can still be region specific by passing a different ingredient factory
+// One concrete pizza class per type; ingredients come from whichever factory is passed in
+// (compare to factory-method, which needed a separate class per region × type)
 
-// concrete cheese pizza
 class CheesePizza : public Pizza {
 public:
     CheesePizza(PizzaIngredientFactory& factory);
-    std::string getDescription() const override;
+    std::string getName() const override;
+    void prepare() override;
 
 private:
     PizzaIngredientFactory& m_factory;
 };
 
-// concrete pepperoni pizza
+class ClamPizza : public Pizza {
+public:
+    ClamPizza(PizzaIngredientFactory& factory);
+    std::string getName() const override;
+    void prepare() override;
+
+private:
+    PizzaIngredientFactory& m_factory;
+};
+
 class PepperoniPizza : public Pizza {
 public:
     PepperoniPizza(PizzaIngredientFactory& factory);
-    std::string getDescription() const override;
+    std::string getName() const override;
+    void prepare() override;
 
 private:
     PizzaIngredientFactory& m_factory;
 };
 
-// pizza store interface
-// notice orderPizza() works the same for all PizzaStores and we add new behavior by
-// creating new stores that implement the createPizza() factory method instead of having
-// to continue changing PizzaStore itself.
+// PizzaStore uses a factory method (createPizza) and an ingredient factory
 class PizzaStore {
 public:
     virtual ~PizzaStore() = default;
@@ -74,14 +92,12 @@ private:
     virtual std::unique_ptr<Pizza> createPizza(PizzaType type) = 0;
 };
 
-// concrete ny pizza store
 class NyPizzaStore : public PizzaStore {
 private:
     std::unique_ptr<Pizza> createPizza(PizzaType type) override;
     NyIngredientFactory m_factory;
 };
 
-// concrete chicago pizza store
 class ChicagoPizzaStore : public PizzaStore {
 private:
     std::unique_ptr<Pizza> createPizza(PizzaType type) override;

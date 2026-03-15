@@ -2,18 +2,15 @@
 
 int main()
 {
-    // program to the interface, not the implementation
-    std::unique_ptr<Duck> mallard = std::make_unique<MallardDuck>();
-    std::unique_ptr<Duck> rubberDuckie = std::make_unique<RubberDuck>();
+    MallardDuck mallard;
+    mallard.display();
+    mallard.performQuack();
+    mallard.performFly();
 
-    // each has unique behavior
-    mallard->display();
-    mallard->performQuack();
-    rubberDuckie->display();
-    rubberDuckie->performQuack();
-
-    // can change behavior at runtime
-    rubberDuckie->setQuack(std::make_unique<Quack>());
-    rubberDuckie->display();
-    rubberDuckie->performQuack();
+    // model duck starts unable to fly; swap to rocket-powered at runtime
+    ModelDuck model;
+    model.display();
+    model.performFly();
+    model.setFlyBehavior(std::make_unique<FlyRocketPowered>());
+    model.performFly();
 }
