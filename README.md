@@ -26,6 +26,23 @@ clients that use it.
 ```mermaid
 classDiagram
 
+class FlyBehavior {
+    public virtual ~FlyBehavior() = default;
+    public virtual void fly() const = 0;
+}
+
+class FlyWithWings {
+    public void fly() const override
+}
+
+class FlyNoWay {
+    public void fly() const override
+}
+
+class FlyRocketPowered {
+    public void fly() const override
+}
+
 class QuackBehavior {
     public virtual ~QuackBehavior() = default;
     public virtual void quack() const = 0;
@@ -39,13 +56,19 @@ class Squeak {
     public void quack() const override
 }
 
+class MuteQuack {
+    public void quack() const override
+}
+
 class Duck {
     public virtual ~Duck() = default
     public virtual void display() const = 0
-
+    public void swim()
+    public void performFly()
     public void performQuack()
-    public void setQuack(std::unique_ptr__QuackBehavior__ qb)
-
+    public void setFlyBehavior(std::unique_ptr__FlyBehavior__ fb)
+    public void setQuackBehavior(std::unique_ptr__QuackBehavior__ qb)
+    private std::unique_ptr__FlyBehavior__ m_flyBehavior
     private std::unique_ptr__QuackBehavior__ m_quackBehavior
 }
 
@@ -59,11 +82,22 @@ class RubberDuck {
     public void display() const override
 }
 
-Duck <|.. RubberDuck
+class ModelDuck {
+    public ModelDuck()
+    public void display() const override
+}
+
 Duck <|.. MallardDuck
+Duck <|.. RubberDuck
+Duck <|.. ModelDuck
+Duck --> FlyBehavior
 Duck --> QuackBehavior
+FlyBehavior <|.. FlyWithWings
+FlyBehavior <|.. FlyNoWay
+FlyBehavior <|.. FlyRocketPowered
 QuackBehavior <|.. Quack
 QuackBehavior <|.. Squeak
+QuackBehavior <|.. MuteQuack
 ```
 
 ## Observer Pattern
@@ -78,6 +112,11 @@ class Observer {
     public virtual void update() = 0;
 }
 
+class DisplayElement {
+    public virtual ~DisplayElement() = default;
+    public virtual void display() const = 0;
+}
+
 class Subject {
     public virtual ~Subject() = default;
     public virtual void registerObserver(Observer*) = 0;
@@ -86,43 +125,64 @@ class Subject {
 }
 
 class WeatherData {
-    public void registerObserver(Observer* observer) override;
-    public void removeObserver(Observer* observer) override;
-    public void notifyObservers() override;
-    public void setTemp(double tempF);
-    public double getTemp() const;
-    public void setHumidity(double humidity);
-    public double getHumidity() const;
-
-    private std::vector__Observer*__ m_observers;
-    private double m_tempF;
-    private double m_humidity;
+    public void registerObserver(Observer* observer) override
+    public void removeObserver(Observer* observer) override
+    public void notifyObservers() override
+    public void setMeasurements(double tempF, double humidity, double pressure)
+    public double getTemp() const
+    public double getHumidity() const
+    public double getPressure() const
+    private std::vector__Observer*__ m_observers
+    private double m_tempF
+    private double m_humidity
+    private double m_pressure
 }
 
-class BasicDisplay {
-    public BasicDisplay(std::shared_ptr__WeatherData__ weatherData);
-    public ~BasicDisplay() override;
-    public void update() override;
-
-    private std::shared_ptr__WeatherData__ m_weatherData;
+class CurrentConditionsDisplay {
+    public CurrentConditionsDisplay(std::shared_ptr__WeatherData__ weatherData)
+    public ~CurrentConditionsDisplay() override
+    public void update() override
+    public void display() const override
+    private std::shared_ptr__WeatherData__ m_weatherData
+    private double m_temp
+    private double m_humidity
 }
 
-class HeatIndexDisplay {
-    public HeatIndexDisplay(std::shared_ptr__WeatherData__ weatherData);
-    public ~HeatIndexDisplay() override;
-    public void update() override;
+class StatisticsDisplay {
+    public StatisticsDisplay(std::shared_ptr__WeatherData__ weatherData)
+    public ~StatisticsDisplay() override
+    public void update() override
+    public void display() const override
+    private std::shared_ptr__WeatherData__ m_weatherData
+    private double m_minTemp
+    private double m_maxTemp
+    private double m_sumTemp
+    private int m_numReadings
+}
 
-    private std::shared_ptr__WeatherData__ m_weatherData;
-    private double getHeatIndex(double temp, double humidity);
+class ForecastDisplay {
+    public ForecastDisplay(std::shared_ptr__WeatherData__ weatherData)
+    public ~ForecastDisplay() override
+    public void update() override
+    public void display() const override
+    private std::shared_ptr__WeatherData__ m_weatherData
+    private double m_currentPressure
+    private double m_lastPressure
 }
 
 Subject <|.. WeatherData
-Observer <|.. BasicDisplay
-Observer <|.. HeatIndexDisplay
+Observer <|.. CurrentConditionsDisplay
+Observer <|.. StatisticsDisplay
+Observer <|.. ForecastDisplay
+DisplayElement <|.. CurrentConditionsDisplay
+DisplayElement <|.. StatisticsDisplay
+DisplayElement <|.. ForecastDisplay
 WeatherData --> Observer
-BasicDisplay --> WeatherData
-HeatIndexDisplay --> WeatherData
+CurrentConditionsDisplay --> WeatherData
+StatisticsDisplay --> WeatherData
+ForecastDisplay --> WeatherData
 ```
+
 ## Decorator Pattern
 
 The Decorator Pattern attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
@@ -133,51 +193,69 @@ classDiagram
 class Beverage {
     public virtual ~Beverage() = default;
     public virtual std::string getDescription() const = 0;
+    public virtual double cost() const = 0;
 }
 
-class Coffee {
-    public std::string getDescription() const override;
+class Espresso {
+    public std::string getDescription() const override
+    public double cost() const override
 }
 
-class Tea {
-    public std::string getDescription() const override;
+class HouseBlend {
+    public std::string getDescription() const override
+    public double cost() const override
+}
+
+class DarkRoast {
+    public std::string getDescription() const override
+    public double cost() const override
+}
+
+class CondimentDecorator {
+    public virtual std::string getDescription() const = 0;
+    public virtual double cost() const = 0;
 }
 
 class Milk {
-    public Milk(std::shared_ptr__Beverage__ beverage);
-    public std::string getDescription() const override;
-    private std::shared_ptr__Beverage__ m_beverage;
+    public Milk(std::shared_ptr__Beverage__ beverage)
+    public std::string getDescription() const override
+    public double cost() const override
+    private std::shared_ptr__Beverage__ m_beverage
+}
+
+class Mocha {
+    public Mocha(std::shared_ptr__Beverage__ beverage)
+    public std::string getDescription() const override
+    public double cost() const override
+    private std::shared_ptr__Beverage__ m_beverage
 }
 
 class Soy {
-    public Soy(std::shared_ptr__Beverage__ beverage);
-    public std::string getDescription() const override;
-    private std::shared_ptr__Beverage__ m_beverage;
+    public Soy(std::shared_ptr__Beverage__ beverage)
+    public std::string getDescription() const override
+    public double cost() const override
+    private std::shared_ptr__Beverage__ m_beverage
 }
 
 class Whip {
-    public Whip(std::shared_ptr__Beverage__ beverage);
-    public std::string getDescription() const override;
-    private std::shared_ptr__Beverage__ m_beverage;
+    public Whip(std::shared_ptr__Beverage__ beverage)
+    public std::string getDescription() const override
+    public double cost() const override
+    private std::shared_ptr__Beverage__ m_beverage
 }
 
-class Sugar {
-    public Sugar(std::shared_ptr__Beverage__ beverage);
-    public std::string getDescription() const override;
-    private std::shared_ptr__Beverage__ m_beverage;
-}
-
-Beverage <|.. Coffee
-Beverage <|.. Tea
-Beverage <|.. BeverageDecorator
-BeverageDecorator <|.. Milk
-BeverageDecorator <|.. Soy
-BeverageDecorator <|.. Whip
-BeverageDecorator <|.. Sugar
+Beverage <|.. Espresso
+Beverage <|.. HouseBlend
+Beverage <|.. DarkRoast
+Beverage <|.. CondimentDecorator
+CondimentDecorator <|.. Milk
+CondimentDecorator <|.. Mocha
+CondimentDecorator <|.. Soy
+CondimentDecorator <|.. Whip
 Milk --> Beverage
+Mocha --> Beverage
 Soy --> Beverage
 Whip --> Beverage
-Sugar --> Beverage
 ```
 
 ## Factory Method Pattern
@@ -189,49 +267,74 @@ classDiagram
 
 class Pizza {
     public virtual ~Pizza() = default;
-    public virtual std::string getDescription() const = 0;
+    public virtual std::string getName() const = 0;
+    public void prepare()
+    public void bake()
+    public void cut()
+    public void box()
+    protected virtual void doCut()
 }
 
 class NyCheesePizza {
-    public std::string getDescription() const override;
+    public std::string getName() const override
+}
+
+class NyVeggiePizza {
+    public std::string getName() const override
+}
+
+class NyClamPizza {
+    public std::string getName() const override
 }
 
 class NyPepperoniPizza {
-    public std::string getDescription() const override;
+    public std::string getName() const override
 }
 
 class ChicagoCheesePizza {
-    public std::string getDescription() const override;
+    public std::string getName() const override
+    protected void doCut() override
+}
+
+class ChicagoVeggiePizza {
+    public std::string getName() const override
+    protected void doCut() override
+}
+
+class ChicagoClamPizza {
+    public std::string getName() const override
+    protected void doCut() override
 }
 
 class ChicagoPepperoniPizza {
-    public std::string getDescription() const override;
+    public std::string getName() const override
+    protected void doCut() override
 }
 
 class PizzaStore {
     public virtual ~PizzaStore() = default;
-    public std::unique_ptr__Pizza__ orderPizza(PizzaType type);
-    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0;
+    public std::unique_ptr__Pizza__ orderPizza(PizzaType type)
+    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0
 }
 
 class NyPizzaStore {
-    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override
 }
 
 class ChicagoPizzaStore {
-    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override
 }
 
 Pizza <|.. NyCheesePizza
+Pizza <|.. NyVeggiePizza
+Pizza <|.. NyClamPizza
 Pizza <|.. NyPepperoniPizza
 Pizza <|.. ChicagoCheesePizza
+Pizza <|.. ChicagoVeggiePizza
+Pizza <|.. ChicagoClamPizza
 Pizza <|.. ChicagoPepperoniPizza
 PizzaStore <|.. NyPizzaStore
 PizzaStore <|.. ChicagoPizzaStore
-NyPizzaStore --> NyCheesePizza
-NyPizzaStore --> NyPepperoniPizza
-ChicagoPizzaStore --> ChicagoCheesePizza
-ChicagoPizzaStore --> ChicagoPepperoniPizza
 ```
 
 ## Abstract Factory Pattern
@@ -245,65 +348,82 @@ class PizzaIngredientFactory {
     public virtual ~PizzaIngredientFactory() = default;
     public virtual std::string createDough() const = 0;
     public virtual std::string createSauce() const = 0;
+    public virtual std::string createCheese() const = 0;
+    public virtual std::string createClam() const = 0;
 }
 
 class NyIngredientFactory {
-    public std::string createDough() const override;
-    public std::string createSauce() const override;
+    public std::string createDough() const override
+    public std::string createSauce() const override
+    public std::string createCheese() const override
+    public std::string createClam() const override
 }
 
 class ChicagoIngredientFactory {
-    public std::string createDough() const override;
-    public std::string createSauce() const override;
+    public std::string createDough() const override
+    public std::string createSauce() const override
+    public std::string createCheese() const override
+    public std::string createClam() const override
 }
 
 class Pizza {
     public virtual ~Pizza() = default;
-    public virtual std::string getDescription() const = 0;
+    public virtual std::string getName() const = 0;
+    public virtual void prepare() = 0;
+    public void bake()
+    public void cut()
+    public void box()
 }
 
 class CheesePizza {
-    public CheesePizza(PizzaIngredientFactory& factory);
-    public std::string getDescription() const override;
-    private PizzaIngredientFactory& m_factory;
+    public CheesePizza(PizzaIngredientFactory& factory)
+    public std::string getName() const override
+    public void prepare() override
+    private PizzaIngredientFactory& m_factory
+}
+
+class ClamPizza {
+    public ClamPizza(PizzaIngredientFactory& factory)
+    public std::string getName() const override
+    public void prepare() override
+    private PizzaIngredientFactory& m_factory
 }
 
 class PepperoniPizza {
-    public PepperoniPizza(PizzaIngredientFactory& factory);
-    public std::string getDescription() const override;
-    private PizzaIngredientFactory& m_factory;
+    public PepperoniPizza(PizzaIngredientFactory& factory)
+    public std::string getName() const override
+    public void prepare() override
+    private PizzaIngredientFactory& m_factory
 }
 
 class PizzaStore {
     public virtual ~PizzaStore() = default;
-    public std::unique_ptr__Pizza__ orderPizza(PizzaType type);
-    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0;
+    public std::unique_ptr__Pizza__ orderPizza(PizzaType type)
+    private virtual std::unique_ptr__Pizza__ createPizza(PizzaType type) = 0
 }
 
 class NyPizzaStore {
-    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
-    private NyIngredientFactory m_factory;
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override
+    private NyIngredientFactory m_factory
 }
 
 class ChicagoPizzaStore {
-    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override;
-    private ChicagoIngredientFactory m_factory;
+    private std::unique_ptr__Pizza__ createPizza(PizzaType type) override
+    private ChicagoIngredientFactory m_factory
 }
 
 PizzaIngredientFactory <|.. NyIngredientFactory
 PizzaIngredientFactory <|.. ChicagoIngredientFactory
 Pizza <|.. CheesePizza
+Pizza <|.. ClamPizza
 Pizza <|.. PepperoniPizza
 PizzaStore <|.. NyPizzaStore
 PizzaStore <|.. ChicagoPizzaStore
 CheesePizza --> PizzaIngredientFactory
+ClamPizza --> PizzaIngredientFactory
 PepperoniPizza --> PizzaIngredientFactory
-NyPizzaStore --> NyIngredientFactory
-ChicagoPizzaStore --> ChicagoIngredientFactory
-NyPizzaStore --> CheesePizza
-NyPizzaStore --> PepperoniPizza
-ChicagoPizzaStore --> CheesePizza
-ChicagoPizzaStore --> PepperoniPizza
+NyPizzaStore *-- NyIngredientFactory
+ChicagoPizzaStore *-- ChicagoIngredientFactory
 ```
 
 ## Command Pattern
@@ -317,6 +437,11 @@ class Command {
     public virtual ~Command() = default;
     public virtual void execute() = 0;
     public virtual void undo() = 0;
+}
+
+class NoCommand {
+    public void execute() override
+    public void undo() override
 }
 
 class Light {
@@ -340,17 +465,48 @@ class LightOffCommand {
     private Light& m_light
 }
 
-class RemoteControl {
-    public void setCommand(std::unique_ptr__Command__ command)
-    public void pressButton()
-    public void pressUndo()
-    private std::unique_ptr__Command__ m_command
+class CeilingFan {
+    public CeilingFan(std::string location)
+    public void high()
+    public void off()
+    private std::string m_location
 }
 
+class CeilingFanHighCommand {
+    public CeilingFanHighCommand(CeilingFan& fan)
+    public void execute() override
+    public void undo() override
+    private CeilingFan& m_fan
+}
+
+class CeilingFanOffCommand {
+    public CeilingFanOffCommand(CeilingFan& fan)
+    public void execute() override
+    public void undo() override
+    private CeilingFan& m_fan
+}
+
+class RemoteControl {
+    public static constexpr int c_slots = 7
+    public RemoteControl()
+    public void setCommand(int slot, unique_ptr__Command__ onCmd, unique_ptr__Command__ offCmd)
+    public void onButtonWasPushed(int slot)
+    public void offButtonWasPushed(int slot)
+    public void undoButtonWasPushed()
+    private array__unique_ptr__Command__ c_slots__ m_onCommands
+    private array__unique_ptr__Command__ c_slots__ m_offCommands
+    private Command* m_lastCommand
+}
+
+Command <|.. NoCommand
 Command <|.. LightOnCommand
 Command <|.. LightOffCommand
+Command <|.. CeilingFanHighCommand
+Command <|.. CeilingFanOffCommand
 LightOnCommand --> Light
 LightOffCommand --> Light
+CeilingFanHighCommand --> CeilingFan
+CeilingFanOffCommand --> CeilingFan
 RemoteControl --> Command
 ```
 
@@ -373,6 +529,11 @@ class Turkey {
     public virtual void fly() const = 0;
 }
 
+class GreenHeadDuck {
+    public void quack() const override
+    public void fly() const override
+}
+
 class WildTurkey {
     public void gobble() const override
     public void fly() const override
@@ -385,6 +546,7 @@ class TurkeyAdapter {
     private Turkey& m_turkey
 }
 
+Duck <|.. GreenHeadDuck
 Duck <|.. TurkeyAdapter
 Turkey <|.. WildTurkey
 TurkeyAdapter --> Turkey
@@ -401,6 +563,7 @@ class Amplifier {
     public void on()
     public void off()
     public void setVolume(int level)
+    public void setSurroundSound()
 }
 
 class DvdPlayer {
@@ -416,25 +579,40 @@ class Projector {
     public void wideScreenMode()
 }
 
+class Screen {
+    public void down()
+    public void up()
+}
+
 class TheaterLights {
     public void on()
     public void dim(int level)
 }
 
+class PopcornPopper {
+    public void on()
+    public void off()
+    public void pop()
+}
+
 class HomeTheaterFacade {
-    public HomeTheaterFacade(Amplifier&, DvdPlayer&, Projector&, TheaterLights&)
+    public HomeTheaterFacade(Amplifier&, DvdPlayer&, Projector&, Screen&, TheaterLights&, PopcornPopper&)
     public void watchMovie(const std::string& movie)
     public void endMovie()
     private Amplifier& m_amp
     private DvdPlayer& m_dvd
     private Projector& m_projector
+    private Screen& m_screen
     private TheaterLights& m_lights
+    private PopcornPopper& m_popper
 }
 
 HomeTheaterFacade --> Amplifier
 HomeTheaterFacade --> DvdPlayer
 HomeTheaterFacade --> Projector
+HomeTheaterFacade --> Screen
 HomeTheaterFacade --> TheaterLights
+HomeTheaterFacade --> PopcornPopper
 ```
 
 ## Template Method Pattern
@@ -528,16 +706,22 @@ class MenuComponent {
     public virtual void add(std::unique_ptr__MenuComponent__ component)
     public virtual std::string getName() const = 0;
     public virtual std::string getDescription() const = 0;
+    public virtual double getPrice() const
+    public virtual bool isVegetarian() const
     public virtual void print() const = 0;
 }
 
 class MenuItem {
-    public MenuItem(std::string name, std::string description)
+    public MenuItem(std::string name, std::string description, bool vegetarian, double price)
     public std::string getName() const override
     public std::string getDescription() const override
+    public double getPrice() const override
+    public bool isVegetarian() const override
     public void print() const override
     private std::string m_name
     private std::string m_description
+    private bool m_vegetarian
+    private double m_price
 }
 
 class Menu {
@@ -598,8 +782,8 @@ class SoldState {
     private GumballMachine& m_machine
 }
 
-class SoldOutState {
-    public SoldOutState(GumballMachine& machine)
+class WinnerState {
+    public WinnerState(GumballMachine& machine)
     public void insertQuarter() override
     public void ejectQuarter() override
     public void turnCrank() override
@@ -607,11 +791,32 @@ class SoldOutState {
     private GumballMachine& m_machine
 }
 
+class SoldOutState {
+    public void insertQuarter() override
+    public void ejectQuarter() override
+    public void turnCrank() override
+    public void dispense() override
+}
+
 class GumballMachine {
     public GumballMachine(int count)
     public void insertQuarter()
     public void ejectQuarter()
     public void turnCrank()
+    public void releaseBall()
+    public int getCount() const
+    public void setState(State& state)
+    public void print() const
+    public State& getNoQuarterState()
+    public State& getHasQuarterState()
+    public State& getSoldState()
+    public State& getWinnerState()
+    public State& getSoldOutState()
+    private NoQuarterState m_noQuarterState
+    private HasQuarterState m_hasQuarterState
+    private SoldState m_soldState
+    private WinnerState m_winnerState
+    private SoldOutState m_soldOutState
     private State* m_currentState
     private int m_count
 }
@@ -619,12 +824,14 @@ class GumballMachine {
 State <|.. NoQuarterState
 State <|.. HasQuarterState
 State <|.. SoldState
+State <|.. WinnerState
 State <|.. SoldOutState
-GumballMachine --> State
 GumballMachine *-- NoQuarterState
 GumballMachine *-- HasQuarterState
 GumballMachine *-- SoldState
+GumballMachine *-- WinnerState
 GumballMachine *-- SoldOutState
+GumballMachine --> State
 ```
 
 ## Proxy Pattern
@@ -650,7 +857,7 @@ class ProxyImage {
     public ProxyImage(std::string filename)
     public void display() const override
     private std::string m_filename
-    private std::unique_ptr__RealImage__ m_realImage
+    private mutable std::unique_ptr__RealImage__ m_realImage
 }
 
 Image <|.. RealImage
