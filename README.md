@@ -2,6 +2,20 @@
 
 C++ examples for the book _Head First Design Patterns 2e._ Simplified to minimal examples and adapted to C++ conventions.
 
+## Build
+
+```
+./build.sh
+```
+
+## Run
+
+```
+./run.sh              # run all examples
+./run.sh <pattern>    # run one example, e.g. ./run.sh strategy
+./run.sh -h           # list available patterns
+```
+
 ## Strategy Pattern
 
 The Strategy Pattern defines a family of algorithms,
