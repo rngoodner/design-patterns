@@ -2,6 +2,24 @@
 
 C++ examples for the book _Head First Design Patterns 2e._ Simplified to minimal examples and adapted to C++ conventions.
 
+## Patterns
+
+| Pattern | Category | Intent |
+|---------|----------|--------|
+| [Strategy](#strategy-pattern) | Behavioral | Define a family of algorithms, encapsulate each one, and make them interchangeable |
+| [Observer](#observer-pattern) | Behavioral | Define a one-to-many dependency so all dependents are notified when one object changes state |
+| [Decorator](#decorator-pattern) | Structural | Attach additional responsibilities to an object dynamically, as a flexible alternative to subclassing |
+| [Factory Method](#factory-method-pattern) | Creational | Define an interface for creating an object, but let subclasses decide which class to instantiate |
+| [Abstract Factory](#abstract-factory-pattern) | Creational | Provide an interface for creating families of related objects without specifying concrete classes |
+| [Command](#command-pattern) | Behavioral | Encapsulate a request as an object to support undo, queuing, and parameterization |
+| [Adapter](#adapter-pattern) | Structural | Convert the interface of a class into another interface clients expect |
+| [Facade](#facade-pattern) | Structural | Provide a unified interface to a set of interfaces in a subsystem |
+| [Template Method](#template-method-pattern) | Behavioral | Define the skeleton of an algorithm in a base class, deferring steps to subclasses |
+| [Iterator](#iterator-pattern) | Behavioral | Access elements of a collection sequentially without exposing its underlying representation |
+| [Composite](#composite-pattern) | Structural | Compose objects into tree structures so clients treat individual objects and compositions uniformly |
+| [State](#state-pattern) | Behavioral | Allow an object to alter its behavior when its internal state changes |
+| [Proxy](#proxy-pattern) | Structural | Provide a surrogate or placeholder for another object to control access to it |
+
 ## Build
 
 ```
@@ -16,14 +34,16 @@ C++ examples for the book _Head First Design Patterns 2e._ Simplified to minimal
 ./run.sh -h           # list available patterns
 ```
 
+---
+
 ## Strategy Pattern
 
-The Strategy Pattern defines a family of algorithms,
-encapsulates each one, and makes them interchangeable.
-Strategy lets the algorithm vary independently from
-clients that use it.
+> The Strategy Pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable. Strategy lets the algorithm vary independently from clients that use it.
 
 `Duck` holds a `FlyBehavior` and `QuackBehavior` by composition rather than inheriting separate fly/quack variations. `MallardDuck`, `RubberDuck`, and `ModelDuck` each inject different behaviors in their constructors. `main.cpp` then swaps `ModelDuck`'s fly behavior at runtime via `setFlyBehavior()`, showing that the algorithm varies independently from the duck that uses it.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -102,11 +122,18 @@ QuackBehavior <|.. Squeak
 QuackBehavior <|.. MuteQuack
 ```
 
+</details>
+
+---
+
 ## Observer Pattern
 
-The Observer Pattern defines a one-to-many dependency between objects so that when one object changes state, all of its dependents are notified and updated automatically.
+> The Observer Pattern defines a one-to-many dependency between objects so that when one object changes state, all of its dependents are notified and updated automatically.
 
 `WeatherData` is the subject; `CurrentConditionsDisplay`, `StatisticsDisplay`, and `ForecastDisplay` are observers. Each display registers itself with `WeatherData` on construction and deregisters in its destructor (RAII). Calling `setMeasurements()` triggers `notifyObservers()`, which calls `update()` on every registered display. The displays use the pull model — they call `getTemp()` and `getHumidity()` on the subject inside `update()` rather than receiving data as arguments.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -187,11 +214,18 @@ StatisticsDisplay --> WeatherData
 ForecastDisplay --> WeatherData
 ```
 
+</details>
+
+---
+
 ## Decorator Pattern
 
-The Decorator Pattern attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
+> The Decorator Pattern attaches additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
 
 `Espresso`, `HouseBlend`, and `DarkRoast` are base beverages. `Milk`, `Mocha`, `Soy`, and `Whip` are decorators that each wrap a `shared_ptr<Beverage>` and delegate `cost()` and `getDescription()` down the chain, appending their own contribution. `main.cpp` chains multiple decorators onto a single beverage — e.g. a `DarkRoast` wrapped with two `Mocha`s and a `Whip` — showing how responsibilities accumulate without subclassing.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -264,11 +298,18 @@ Soy --> Beverage
 Whip --> Beverage
 ```
 
+</details>
+
+---
+
 ## Factory Method Pattern
 
-The Factory Method Pattern defines an interface for creating an object, but lets subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.
+> The Factory Method Pattern defines an interface for creating an object, but lets subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.
 
 `PizzaStore::orderPizza()` is the invariant — it calls `createPizza()`, then prepares, bakes, cuts, and boxes the result. `createPizza()` is the factory method: `NyPizzaStore` overrides it to create NY-style pizzas, `ChicagoPizzaStore` to create Chicago-style. The client calls `orderPizza()` on the store without knowing which concrete `Pizza` subclass will be instantiated.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -345,11 +386,18 @@ PizzaStore <|.. NyPizzaStore
 PizzaStore <|.. ChicagoPizzaStore
 ```
 
+</details>
+
+---
+
 ## Abstract Factory Pattern
 
-The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+> The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
 
 `CheesePizza`, `ClamPizza`, and `PepperoniPizza` each receive a `PizzaIngredientFactory&` in their constructor and call its methods in `prepare()` to get regional ingredients. `NyPizzaStore` owns an `NyIngredientFactory`; `ChicagoPizzaStore` owns a `ChicagoIngredientFactory`. The same `CheesePizza` class produces a different pizza depending on which factory it receives — the factory determines the product family, not the pizza subclass.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -436,11 +484,18 @@ NyPizzaStore *-- NyIngredientFactory
 ChicagoPizzaStore *-- ChicagoIngredientFactory
 ```
 
+</details>
+
+---
+
 ## Command Pattern
 
-The Command Pattern encapsulates a request as an object, thereby letting you parameterize other objects with different requests, queue or log requests, and support undoable operations.
+> The Command Pattern encapsulates a request as an object, thereby letting you parameterize other objects with different requests, queue or log requests, and support undoable operations.
 
 `RemoteControl` holds an array of on/off `Command` pairs set via `setCommand()`. Pressing a button calls `execute()` on the stored command and saves it to `m_lastCommand`. `undoButtonWasPushed()` calls `undo()` on `m_lastCommand` to reverse the last action. `NoCommand` fills empty slots so no null checks are needed anywhere in the remote.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -522,11 +577,18 @@ CeilingFanOffCommand --> CeilingFan
 RemoteControl --> Command
 ```
 
+</details>
+
+---
+
 ## Adapter Pattern
 
-The Adapter Pattern converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn't otherwise because of incompatible interfaces.
+> The Adapter Pattern converts the interface of a class into another interface clients expect. Adapter lets classes work together that couldn't otherwise because of incompatible interfaces.
 
 `WildTurkey` has `gobble()` and a short `fly()`, but the client function `testDuck()` expects the `Duck` interface (`quack()` and `fly()`). `TurkeyAdapter` wraps a `Turkey&` and implements `Duck`, translating `quack()` to `gobble()`. Because `testDuck()` takes a `Duck&`, `TurkeyAdapter` passes in wherever a `GreenHeadDuck` would — the client is unaware of the adaptation.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -566,11 +628,18 @@ Turkey <|.. WildTurkey
 TurkeyAdapter --> Turkey
 ```
 
+</details>
+
+---
+
 ## Facade Pattern
 
-The Facade Pattern provides a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level interface that makes the subsystem easier to use.
+> The Facade Pattern provides a unified interface to a set of interfaces in a subsystem. Facade defines a higher-level interface that makes the subsystem easier to use.
 
 Six subsystem classes (`Amplifier`, `DvdPlayer`, `Projector`, `Screen`, `TheaterLights`, `PopcornPopper`) each have their own interface. `HomeTheaterFacade` holds references to all of them and exposes just two methods: `watchMovie()` and `endMovie()`. The client in `main.cpp` constructs the subsystem objects and the facade, then only calls those two methods — all subsystem coordination is hidden behind the facade.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -631,11 +700,18 @@ HomeTheaterFacade --> TheaterLights
 HomeTheaterFacade --> PopcornPopper
 ```
 
+</details>
+
+---
+
 ## Template Method Pattern
 
-The Template Method Pattern defines the skeleton of an algorithm in a method, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
+> The Template Method Pattern defines the skeleton of an algorithm in a method, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
 
 `CaffeineBeverage::prepareRecipe()` is the template method: boil water → brew → pour → add condiments. `boilWater()` and `pourInCup()` are private non-virtual fixed steps. `brew()` and `addCondiments()` are private pure virtual hook steps that `FilterCoffee` and `SteepedTea` override to supply their specific behavior. The algorithm structure in `prepareRecipe()` never changes.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -663,11 +739,18 @@ CaffeineBeverage <|.. FilterCoffee
 CaffeineBeverage <|.. SteepedTea
 ```
 
+</details>
+
+---
+
 ## Iterator Pattern
 
-The Iterator Pattern provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.
+> The Iterator Pattern provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.
 
 `DinerMenu` stores items in a fixed-size `std::array`; `PancakeHouseMenu` stores them in a `std::vector`. Both expose `createIterator()` returning a `std::unique_ptr<Iterator>`. The client function `printMenu()` in `main.cpp` takes an `Iterator&` and traverses either menu identically, with no knowledge of the backing container type.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -714,11 +797,18 @@ DinerMenu --> DinerMenuIterator
 PancakeHouseMenu --> PancakeMenuIterator
 ```
 
+</details>
+
+---
+
 ## Composite Pattern
 
-The Composite Pattern allows you to compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly.
+> The Composite Pattern allows you to compose objects into tree structures to represent part-whole hierarchies. Composite lets clients treat individual objects and compositions of objects uniformly.
 
 `MenuItem` is the leaf and `Menu` is the composite; both extend `MenuComponent`. `Menu` stores a `vector<unique_ptr<MenuComponent>>` and its `print()` recursively calls `print()` on each child. `main.cpp` builds a tree of menus containing submenus and items, then calls `print()` on the root — the same call works uniformly for leaves and subtrees.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -762,11 +852,18 @@ MenuComponent <|.. Menu
 Menu --> MenuComponent
 ```
 
+</details>
+
+---
+
 ## State Pattern
 
-The State Pattern allows an object to alter its behavior when its internal state changes. The object will appear to change its class.
+> The State Pattern allows an object to alter its behavior when its internal state changes. The object will appear to change its class.
 
 `GumballMachine` owns all five state objects by value and holds a `State*` pointing to the current one. Each state implements the full action interface (`insertQuarter`, `ejectQuarter`, `turnCrank`, `dispense`) and calls `machine.setState()` to transition to the next state. The machine delegates every action to `m_currentState`, so its behavior changes entirely as the pointer changes — no conditionals needed in the machine itself.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -858,11 +955,18 @@ GumballMachine *-- SoldOutState
 GumballMachine --> State
 ```
 
+</details>
+
+---
+
 ## Proxy Pattern
 
-The Proxy Pattern provides a surrogate or placeholder for another object to control access to it.
+> The Proxy Pattern provides a surrogate or placeholder for another object to control access to it.
 
 `RealImage` loads a file from disk in its constructor — an expensive operation. `ProxyImage` holds the same filename but defers construction of `RealImage` until the first `display()` call. `m_realImage` is `mutable` so `display()` can be `const` while still initializing on first use. Subsequent calls reuse the already-loaded `RealImage`. The client interacts with both through the same `Image` interface.
+
+<details>
+<summary>Class diagram</summary>
 
 ```mermaid
 classDiagram
@@ -890,3 +994,5 @@ Image <|.. RealImage
 Image <|.. ProxyImage
 ProxyImage --> RealImage
 ```
+
+</details>
