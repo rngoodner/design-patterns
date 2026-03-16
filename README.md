@@ -661,17 +661,17 @@ class Iterator {
 class DinerMenu {
     public DinerMenu()
     public std::unique_ptr__Iterator__ createIterator() const
-    private MenuEntry m_items[MAX_ITEMS]
-    private int m_count
+    private std::array__MenuEntry__ m_items
+    private size_t m_count
 }
 
 class DinerMenuIterator {
-    public DinerMenuIterator(const MenuEntry* items, int count)
+    public DinerMenuIterator(const std::array__MenuEntry__& items, size_t count)
     public bool hasNext() const override
     public MenuEntry next() override
-    private const MenuEntry* m_items
-    private int m_count
-    private int m_position
+    private const std::array__MenuEntry__& m_items
+    private size_t m_count
+    private size_t m_position
 }
 
 class PancakeHouseMenu {
@@ -685,7 +685,7 @@ class PancakeMenuIterator {
     public bool hasNext() const override
     public MenuEntry next() override
     private const std::vector__MenuEntry__& m_items
-    private int m_position
+    private size_t m_position
 }
 
 Iterator <|.. DinerMenuIterator

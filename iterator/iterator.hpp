@@ -1,6 +1,7 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
+#include <array>
 #include <memory>
 #include <string>
 #include <vector>
@@ -24,27 +25,27 @@ public:
 // diner menu backed by a fixed-size array
 class DinerMenu {
 public:
-    static constexpr int c_maxItems = 6;
+    static constexpr size_t c_maxItems = 6;
     DinerMenu();
     std::unique_ptr<Iterator> createIterator() const;
 
 private:
-    MenuEntry m_items[c_maxItems];
-    int m_count { 0 };
+    std::array<MenuEntry, c_maxItems> m_items {};
+    size_t m_count { 0 };
     void addItem(std::string name, std::string description, bool vegetarian, double price);
 };
 
 // iterator over DinerMenu's fixed array
 class DinerMenuIterator : public Iterator {
 public:
-    DinerMenuIterator(const MenuEntry* items, int count);
+    DinerMenuIterator(const std::array<MenuEntry, DinerMenu::c_maxItems>& items, size_t count);
     bool hasNext() const override;
     MenuEntry next() override;
 
 private:
-    const MenuEntry* m_items;
-    int m_count;
-    int m_position { 0 };
+    const std::array<MenuEntry, DinerMenu::c_maxItems>& m_items;
+    size_t m_count;
+    size_t m_position { 0 };
 };
 
 // pancake house menu backed by a vector
@@ -67,7 +68,7 @@ public:
 
 private:
     const std::vector<MenuEntry>& m_items;
-    int m_position { 0 };
+    size_t m_position { 0 };
 };
 
 #endif // ITERATOR_HPP

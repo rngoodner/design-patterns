@@ -21,7 +21,7 @@ std::unique_ptr<Iterator> DinerMenu::createIterator() const
     return std::make_unique<DinerMenuIterator>(m_items, m_count);
 }
 
-DinerMenuIterator::DinerMenuIterator(const MenuEntry* items, int count)
+DinerMenuIterator::DinerMenuIterator(const std::array<MenuEntry, DinerMenu::c_maxItems>& items, size_t count)
     : m_items(items)
     , m_count(count)
 {
@@ -61,7 +61,7 @@ PancakeMenuIterator::PancakeMenuIterator(const std::vector<MenuEntry>& items)
 
 bool PancakeMenuIterator::hasNext() const
 {
-    return m_position < static_cast<int>(m_items.size());
+    return m_position < m_items.size();
 }
 
 MenuEntry PancakeMenuIterator::next()
