@@ -84,13 +84,20 @@ public:
     int getCount() const;
     void setState(State& state);
     void print() const;
+
+private:
+    // state objects are internal collaborators; they access state getters directly
+    friend class NoQuarterState;
+    friend class HasQuarterState;
+    friend class SoldState;
+    friend class WinnerState;
+
     State& getNoQuarterState();
     State& getHasQuarterState();
     State& getSoldState();
     State& getWinnerState();
     State& getSoldOutState();
 
-private:
     NoQuarterState m_noQuarterState;
     HasQuarterState m_hasQuarterState;
     SoldState m_soldState;

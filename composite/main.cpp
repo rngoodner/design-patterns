@@ -12,8 +12,8 @@ int main()
     breakfastMenu->add(std::make_unique<MenuItem>("Blueberry Pancakes", "Pancakes with blueberries", true, 3.49));
 
     auto dinerMenu = std::make_unique<Menu>("Diner Menu", "Lunch");
-    dinerMenu->add(std::make_unique<MenuItem>("Vegetarian BLT", "Fakin' bacon with lettuce", true, 2.99));
-    dinerMenu->add(std::make_unique<MenuItem>("BLT", "Bacon with lettuce", false, 2.99));
+    dinerMenu->add(std::make_unique<MenuItem>("Vegetarian BLT", "Fakin' bacon with lettuce and tomato", true, 2.99));
+    dinerMenu->add(std::make_unique<MenuItem>("BLT", "Bacon with lettuce and tomato", false, 2.99));
     dinerMenu->add(std::make_unique<MenuItem>("Soup of the day", "Soup with a side salad", false, 3.29));
 
     // dessert sub-menu nested inside the diner menu — menus and items treated uniformly

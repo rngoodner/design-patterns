@@ -4,7 +4,7 @@
 
 int main()
 {
-    std::srand(42); // fixed seed for reproducible output
+    std::srand(6); // fixed seed for reproducible output
 
     GumballMachine machine { 5 };
     machine.print();
@@ -20,7 +20,7 @@ int main()
     machine.turnCrank();
     machine.print();
 
-    // force winner state to demonstrate it — seed 42 triggers winner on this roll
+    // seed 6 triggers winner on this roll
     machine.insertQuarter();
     machine.turnCrank();
     machine.print();

@@ -1,11 +1,18 @@
 #include "template-method.hpp"
 
+#include <iostream>
+
 int main()
 {
     FilterCoffee coffee;
-    SteepedTea tea;
+    SteepedTea teaWithLemon { true };  // customer wants lemon
+    SteepedTea teaPlain { false };     // customer declines lemon
 
-    // both follow the same algorithm skeleton; only brew() and addCondiments() differ
+    // coffee uses the default hook (always adds condiments)
     coffee.prepareRecipe();
-    tea.prepareRecipe();
+    std::cout << "\n";
+    // tea overrides the hook — same class, same algorithm, condiments driven by customer preference
+    teaWithLemon.prepareRecipe();
+    std::cout << "\n";
+    teaPlain.prepareRecipe();
 }

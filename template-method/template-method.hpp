@@ -24,10 +24,14 @@ private:
 };
 
 class SteepedTea : public CaffeineBeverage {
+public:
+    explicit SteepedTea(bool wantsCondiments);
+
 private:
+    bool m_wantsCondiments;
     void brew() override;
     void addCondiments() override;
-    // override hook to skip condiments when customer declines
+    // hook: returns customer preference set at construction time
     bool customerWantsCondiments() override;
 };
 

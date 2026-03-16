@@ -4,8 +4,8 @@
 
 DinerMenu::DinerMenu()
 {
-    addItem("Vegetarian BLT", "Fakin' bacon with lettuce on whole wheat", true, 2.99);
-    addItem("BLT", "Bacon with lettuce on whole wheat", false, 2.99);
+    addItem("Vegetarian BLT", "Fakin' bacon with lettuce and tomato on whole wheat", true, 2.99);
+    addItem("BLT", "Bacon with lettuce and tomato on whole wheat", false, 2.99);
     addItem("Soup of the day", "Soup with a side salad", false, 3.29);
     addItem("Hotdog", "A hotdog with sauerkraut", false, 3.05);
 }

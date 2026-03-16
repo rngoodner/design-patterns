@@ -36,6 +36,11 @@ void FilterCoffee::addCondiments()
     std::cout << "Adding sugar and milk\n";
 }
 
+SteepedTea::SteepedTea(bool wantsCondiments)
+    : m_wantsCondiments(wantsCondiments)
+{
+}
+
 void SteepedTea::brew()
 {
     std::cout << "Steeping the tea\n";
@@ -46,8 +51,7 @@ void SteepedTea::addCondiments()
     std::cout << "Adding lemon\n";
 }
 
-// hook: this tea drinker takes it plain
 bool SteepedTea::customerWantsCondiments()
 {
-    return false;
+    return m_wantsCondiments;
 }
