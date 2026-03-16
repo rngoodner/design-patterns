@@ -708,7 +708,7 @@ HomeTheaterFacade --> PopcornPopper
 
 > The Template Method Pattern defines the skeleton of an algorithm in a method, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
 
-`CaffeineBeverage::prepareRecipe()` is the template method: boil water → brew → pour → add condiments. `boilWater()` and `pourInCup()` are private non-virtual fixed steps. `brew()` and `addCondiments()` are private pure virtual hook steps that `FilterCoffee` and `SteepedTea` override to supply their specific behavior. The algorithm structure in `prepareRecipe()` never changes.
+`CaffeineBeverage::prepareRecipe()` is the template method: boil water → brew → pour → conditionally add condiments. `boilWater()` and `pourInCup()` are private non-virtual fixed steps. `brew()` and `addCondiments()` are private pure virtual steps that subclasses must override. `customerWantsCondiments()` is a hook — virtual with a default of `true`, overridden by `SteepedTea` to let the customer opt out. The algorithm structure in `prepareRecipe()` never changes.
 
 <details>
 <summary>Class diagram</summary>
@@ -723,6 +723,7 @@ class CaffeineBeverage {
     private void pourInCup()
     private virtual void brew() = 0
     private virtual void addCondiments() = 0
+    private virtual bool customerWantsCondiments()
 }
 
 class FilterCoffee {
@@ -731,8 +732,10 @@ class FilterCoffee {
 }
 
 class SteepedTea {
+    private bool m_wantsCondiments
     private void brew() override
     private void addCondiments() override
+    private bool customerWantsCondiments() override
 }
 
 CaffeineBeverage <|.. FilterCoffee
