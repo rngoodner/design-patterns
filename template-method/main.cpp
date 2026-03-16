@@ -5,8 +5,8 @@
 int main()
 {
     FilterCoffee coffee;
-    SteepedTea teaWithLemon { true };  // customer wants lemon
-    SteepedTea teaPlain { false };     // customer declines lemon
+    SteepedTea teaWithLemon { true }; // customer wants lemon
+    SteepedTea teaPlain { false }; // customer declines lemon
 
     // coffee uses the default hook (always adds condiments)
     coffee.prepareRecipe();
