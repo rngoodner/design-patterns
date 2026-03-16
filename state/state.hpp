@@ -1,6 +1,8 @@
 #ifndef STATE_HPP
 #define STATE_HPP
 
+#include <random>
+
 // forward declaration to allow states to reference the machine
 class GumballMachine;
 
@@ -76,7 +78,7 @@ public:
 // context: delegates all actions to the current state object
 class GumballMachine {
 public:
-    explicit GumballMachine(int count);
+    explicit GumballMachine(int count, unsigned seed = 11);
     void insertQuarter();
     void ejectQuarter();
     void turnCrank();
@@ -103,6 +105,7 @@ private:
     SoldState m_soldState;
     WinnerState m_winnerState;
     SoldOutState m_soldOutState;
+    std::mt19937 m_rng;
     State* m_currentState;
     int m_count;
 };

@@ -1,16 +1,16 @@
 #include "state.hpp"
 
-#include <cstdlib>
 #include <iostream>
 
 // GumballMachine
 
-GumballMachine::GumballMachine(int count)
+GumballMachine::GumballMachine(int count, unsigned seed)
     : m_noQuarterState(*this)
     , m_hasQuarterState(*this)
     , m_soldState(*this)
     , m_winnerState(*this)
     , m_soldOutState()
+    , m_rng(seed)
     , m_currentState(count > 0 ? static_cast<State*>(&m_noQuarterState) : &m_soldOutState)
     , m_count(count)
 {
@@ -97,7 +97,7 @@ void HasQuarterState::turnCrank()
 {
     std::cout << "You turned...\n";
     // 1-in-10 chance of winning two gumballs
-    if (std::rand() % 10 == 0 && m_machine.getCount() > 1)
+    if (m_machine.m_rng() % 10 == 0 && m_machine.getCount() > 1)
         m_machine.setState(m_machine.getWinnerState());
     else
         m_machine.setState(m_machine.getSoldState());

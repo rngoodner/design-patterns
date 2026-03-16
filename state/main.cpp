@@ -1,12 +1,8 @@
 #include "state.hpp"
 
-#include <cstdlib>
-
 int main()
 {
-    std::srand(6); // fixed seed for reproducible output
-
-    GumballMachine machine { 5 };
+    GumballMachine machine { 5 }; // default seed guarantees winner on the last crank
     machine.print();
 
     machine.insertQuarter();
@@ -20,7 +16,6 @@ int main()
     machine.turnCrank();
     machine.print();
 
-    // seed 6 triggers winner on this roll
     machine.insertQuarter();
     machine.turnCrank();
     machine.print();
